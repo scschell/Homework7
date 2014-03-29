@@ -28,7 +28,9 @@ public class TestOrderedMap{
             return new BinarySearchTreeMap<>();
 		}
 	};
-	
+
+    //General Tests:
+
     @Theory
 	public void createMaps(Fixture fix) {
 	    OrderedMap<String, Integer> a = fix.init();
@@ -89,7 +91,7 @@ public class TestOrderedMap{
 	}
 
     //Iterator Tests:
-
+    //To be done late
 
 	//Exception Tests:
 
@@ -103,6 +105,37 @@ public class TestOrderedMap{
 	public void putNull(Fixture fix) {
         OrderedMap<String, Integer> a = fix.init();
 		a.put(null, 10);
+	}
+
+    @Theory @Test(expected = IllegalArgumentException.class)
+	public void getNull(Fixture fix) {
+        OrderedMap<String, Integer> a = fix.init();
+		a.get(null);
+	}
+
+	@Theory @Test(expected = IllegalArgumentException.class)
+	public void insertNull(Fixture fix) {
+        OrderedMap<String, Integer> a = fix.init();
+		a.insert(null, 10);
+	}
+
+	@Theory @Test(expected = IllegalArgumentException.class)
+	public void removeNull(Fixture fix) {
+        OrderedMap<String, Integer> a = fix.init();
+		a.remove(null);
+	}
+
+    @Theory @Test(expected = IllegalArgumentException.class)
+	public void insertDuplicate(Fixture fix) {
+        OrderedMap<String, Integer> a = fix.init();
+        a.insert("A", 1);
+		a.insert("A", 2);
+	}
+
+	@Theory @Test(expected = IllegalArgumentException.class)
+	public void removeNonInserted(Fixture fix) {
+        OrderedMap<String, Integer> a = fix.init();
+		a.remove("A");
 	}
 
 }
