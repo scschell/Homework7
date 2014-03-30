@@ -23,13 +23,16 @@ public class AvlTreeMap<K extends Comparable<? super K>, V>
         V value;
 		int height;
 
-        // Constructor to make node creation easier to read.
         Node(K k, V v) {
             // left and right default to null
             this.key = k;
             this.value = v;
 			this.height = 0;
         }
+
+        private int getBalanceFactor() {
+            return n.left.height - n.right.height;
+		}
 
         // Just for debugging purposes.
         public String toString() {
@@ -98,10 +101,21 @@ public class AvlTreeMap<K extends Comparable<? super K>, V>
         return n.value;
     }
 
+    private void rotateLeft(Node n) {
+        n.right.left = n;
+		n.right = null;
+		//not sure how to deal with the parent pointer to n
+	}
+
+	private void rotateRight(Node n) {
+        n.left.right = n;
+		n.left = null;
+		//note sure how to deal with the parent pointer to n
+	}
+
     // Insert given key and value into subtree rooted
     // at given node; return changed subtree with new
-    // node added. (Doing this recursively makes it
-    // easier to add fancy rebalancing code later.)
+    // node added.
     private Node insert(Node n, K k, V v) {
         if (n == null) {
             return new Node(k, v);
