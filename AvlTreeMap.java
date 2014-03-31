@@ -103,12 +103,14 @@ public class AvlTreeMap<K extends Comparable<? super K>, V>
 
     private void rotateLeft(Node n) {
         n.right.left = n;
+		n.height-=2;
 		n.right = null;
 		//not sure how to deal with the parent pointer to n
 	}
 
 	private void rotateRight(Node n) {
         n.left.right = n;
+		n.height -=2;
 		n.left = null;
 		//note sure how to deal with the parent pointer to n
 	}
@@ -129,6 +131,14 @@ public class AvlTreeMap<K extends Comparable<? super K>, V>
         } else {
             throw new IllegalArgumentException("duplicate key " + k);
         }
+
+        n.height++;
+
+		if (n.getBalanceFactor() > 1) {
+			this.rotateLeft(n);
+		} else if(n.getBalanceFactor() < 1) {
+            this.rotateRight(n);
+		}
 
         return n;
     }
