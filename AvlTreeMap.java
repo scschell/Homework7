@@ -31,8 +31,28 @@ public class AvlTreeMap<K extends Comparable<? super K>, V>
         }
 
         private int getBalanceFactor() {
-            return n.left.height - n.right.height;
+		    int rightTemp = -1;
+			int leftTemp = -1;
+            if (this.right != null) {
+                rightTemp = this.right.height;
+			}
+			if (this.left != null) {
+                leftTemp = this.left.height;
+			}
+			return leftTemp - rightTemp;
 		}
+
+		private int calculateHeight() {
+		    if ((this.right == null) && (this.left == null)) {
+                return 0;
+			} else if (this.right == null) {
+                return this.left.height + 1;
+			} else if (this.left == null) {
+                return this.right.height + 1;
+			}
+            return Math.max(this.right.height, this.left.height) + 1;
+		}
+
 
         // Just for debugging purposes.
         public String toString() {
@@ -101,18 +121,35 @@ public class AvlTreeMap<K extends Comparable<? super K>, V>
         return n.value;
     }
 
-    private void rotateLeft(Node n) {
-        n.right.left = n;
-		n.height-=2;
-		n.right = null;
-		//not sure how to deal with the parent pointer to n
+    private Node rotateLeft(Node n) {
+        Node temp = n.right;
+		n.right = temp.left;
+		temp.left = n;
+		return temp;
 	}
 
-	private void rotateRight(Node n) {
-        n.left.right = n;
-		n.height -=2;
-		n.left = null;
-		//note sure how to deal with the parent pointer to n
+	private Node rotateRight(Node n) {
+        Node temp = n.left;
+		n.left = temp.right;
+		temp.right = n;
+		return temp;
+	}
+	
+	private Node balance(Node n) {
+        if (n.getBalanceFactor() < -1) {
+		    Node temp = n.right;
+            if (n.right.getBalanceFactor() == 1) {
+                n.right = this.rotateRight(n.right);
+			}
+			return this.rotateLeft(n); 
+		} else if (n.getBalanceFactor() > 1) {
+		    Node temp = n.left;
+            if (n.left.getBalanceFactor() == -1) {
+                n.left = this.rotateLeft(n.left);
+			}
+			return this.rotateRight(n);
+		}
+		return n;
 	}
 
     // Insert given key and value into subtree rooted
@@ -132,14 +169,9 @@ public class AvlTreeMap<K extends Comparable<? super K>, V>
             throw new IllegalArgumentException("duplicate key " + k);
         }
 
-        n.height++;
-
-		if (n.getBalanceFactor() > 1) {
-			this.rotateLeft(n);
-		} else if(n.getBalanceFactor() < 1) {
-            this.rotateRight(n);
-		}
-
+        n.height = n.calculateHeight();
+        n = this.balance(n);
+		
         return n;
     }
 
@@ -151,7 +183,7 @@ public class AvlTreeMap<K extends Comparable<? super K>, V>
         this.root = this.insert(this.root, k, v);
         this.size += 1;
     }
-
+	
     // Return node with maximum key in subtree rooted
     // at given node. (Iterative version because once
     // again recursion has no advantage here.)
@@ -178,7 +210,11 @@ public class AvlTreeMap<K extends Comparable<? super K>, V>
             n.right = this.remove(n.right, k);
         } else {
             n = this.remove(n);
+			return n;
         }
+
+        n.height = n.calculateHeight();
+        n = this.balance(n);
 
         return n;
     }

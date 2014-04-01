@@ -3,6 +3,9 @@
 //          Sayge Schell
 //          sschell3@jhu.edu
 
+import java.util.Iterator;
+import java.util.NoSuchElementException;
+
 import org.junit.Test;
 import org.junit.Before;
 
@@ -24,8 +27,8 @@ public class TestOrderedMap{
     
 	@DataPoint
 	public static final Fixture binaryMap = new Fixture() {
-        public BinarySearchTreeMap<String, Integer> init() {
-            return new BinarySearchTreeMap<>();
+        public AvlTreeMap<String, Integer> init() {
+            return new AvlTreeMap<>();
 		}
 	};
 
@@ -80,20 +83,64 @@ public class TestOrderedMap{
 		assertEquals(a.size(), 0);
 	}
 
+	@Theory
+	public void testRemoveIntense(Fixture fix) {
+        OrderedMap<String, Integer> a = fix.init();
+		a.insert("D", 1);
+		a.insert("E", 2);
+		a.insert("G", 3);
+		a.insert("B", 4);
+		a.insert("A", 5);
+		a.insert("C", 6);
+		a.insert("F", 7);
+		a.remove("A");
+		assertEquals(a.toString(), "{B: 4, C: 6, D: 1, E: 2, F: 7, G: 3}");
+		a.remove("B");
+		assertEquals(a.toString(), "{C: 6, D: 1, E: 2, F: 7, G: 3}");
+		a.remove("C");
+		assertEquals(a.toString(), "{D: 1, E: 2, F: 7, G: 3}");
+		a.remove("D");
+		assertEquals(a.toString(), "{E: 2, F: 7, G: 3}");
+		a.remove("E");
+		assertEquals(a.toString(), "{F: 7, G: 3}");
+		a.remove("F");
+		assertEquals(a.toString(), "{G: 3}");
+		a.remove("G");
+		assertEquals(a.toString(), "{}");
+	}
+
     @Theory
 	public void testToString(Fixture fix) {
         OrderedMap<String, Integer> a = fix.init();
-		a.insert("A", 1);
-		a.insert("B", 2);
-		a.insert("C", 3);
+		a.insert("D", 1);
+		a.insert("E", 2);
+		a.insert("G", 3);
+		a.insert("B", 4);
+		a.insert("A", 5);
+		a.insert("C", 6);
+		a.insert("F", 7);
         System.out.println(a.toString());
-		assertEquals(a.toString(), "{A: 1, B: 2, C: 3}");
+		assertEquals(a.toString(), "{A: 5, B: 4, C: 6, D: 1, E: 2, F: 7, G: 3}");
 	}
 
     //Iterator Tests:
-    //To be done late
+    public void iteratorTest(Fixture fix) {
+        OrderedMap<String, Integer> a = fix.init();
+		Iterator<String> iter = a.iterator();
+		a.insert("A", 10);
+		assertTrue(iter.hasNext());
+        assertEquals("A", iter.next());
+		assertFalse(iter.hasNext());
+	}
 
 	//Exception Tests:
+
+    @Theory @Test(expected = NoSuchElementException.class)
+	public void iteratorExceptionTest(Fixture fix) {
+        OrderedMap<String, Integer> a = fix.init();
+		Iterator<String> iter = a.iterator();
+		iter.next();
+	}
 
     @Theory @Test(expected = IllegalArgumentException.class)
 	public void hasNull(Fixture fix) {
