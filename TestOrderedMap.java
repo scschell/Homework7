@@ -33,6 +33,17 @@ public class TestOrderedMap{
             return new AvlTreeMap<>();
 		}
 	};
+	
+    private interface Fixture {
+        OrderedMap<Integer, Integer> init();
+	}
+    
+	@DataPoint
+	public static final Fixture treapMap = new Fixture() {
+        public TreapmapMap<Integer, Integer> init() {
+            return new TreapMap<>();
+		}
+	};
 
     //checks that size of created map is 0
     @Theory
