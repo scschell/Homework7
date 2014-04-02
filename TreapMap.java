@@ -1,6 +1,7 @@
 import java.util.Iterator;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Random;
 
 /**
     Ordered maps from comparable keys to arbitrary values.
@@ -27,7 +28,7 @@ public class TreapMap<K extends Comparable<? super K>, V>
             // left and right default to null
             this.key = k;
             this.value = v;
-			this.priority = 0; //need to make random
+			this.priority = rand.nextInt(); //random priority
         }
 
         // Just for debugging purposes.
@@ -36,11 +37,17 @@ public class TreapMap<K extends Comparable<? super K>, V>
                 + "; value: " + this.value
                 + ">";
         }
+
+		public int customRandom() {
+            return 1;
+		}
+
     }
 
     private Node root;
     private int size;
     private StringBuilder stringBuilder;
+	private Random rand = new Random();
 
     @Override
     public int size() {
@@ -111,6 +118,15 @@ public class TreapMap<K extends Comparable<? super K>, V>
 		return temp;
 	}
 
+	private Node balance(Node n) {
+        if ((n.right != null) && (n.priority < n.right.priority)) {
+            n = this.rotateLeft(n);
+		} else if ((n.left != null) && (n.priority < n.left.priority)) {
+            n = this.rotateRight(n);
+		}
+		return n;
+	}
+
     // Insert given key and value into subtree rooted
     // at given node; return changed subtree with new
     // node added.
@@ -128,9 +144,7 @@ public class TreapMap<K extends Comparable<? super K>, V>
             throw new IllegalArgumentException("duplicate key " + k);
         }
 
-
-	   //if priority of child is greater than parent, rotate
-		
+        n = this.balance(n);
         return n;
     }
 
@@ -168,12 +182,13 @@ public class TreapMap<K extends Comparable<? super K>, V>
         } else if (cmp > 0) {
             n.right = this.remove(n.right, k);
         } else {
-            n = this.remove(n);
+            if((n.right != null) && (n.left != null)) {
+                n = this.rotateLeft(n);
+			} else {
+			    n = this.remove(n);
+			}
 			return n;
         }
-
-        //if priority of child is greater than parent, rotate
-
         return n;
     }
 
@@ -191,12 +206,7 @@ public class TreapMap<K extends Comparable<? super K>, V>
             return n.left;
         }
 
-        // 2 children
-        Node max = this.max(n.left);
-        n.key = max.key;
-        n.value = max.value;
-        n.left = this.remove(n.left, max.key);
-        return n;
+		return n;
     }
 
     @Override
