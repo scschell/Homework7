@@ -24,14 +24,16 @@ public class TestOrderedMap{
     private interface Fixture {
         OrderedMap<String, Integer> init();
 	}
-    
+    	
+    	//Test AVL Tree
 	@DataPoint
 	public static final Fixture avlMap = new Fixture() {
         public AvlTreeMap<String, Integer> init() {
             return new AvlTreeMap<>();
 		}
 	};
-
+	
+	//Test Treap
 	@DataPoint
 	public static final Fixture treapMap = new Fixture() {
         public TreapMap<String, Integer> init() {
