@@ -25,12 +25,12 @@ public class TestOrderedMap{
         OrderedMap<String, Integer> init();
 	}
     
-	/*@DataPoint
+	@DataPoint
 	public static final Fixture avlMap = new Fixture() {
         public AvlTreeMap<String, Integer> init() {
             return new AvlTreeMap<>();
 		}
-	};*/
+	};
 
 	@DataPoint
 	public static final Fixture treapMap = new Fixture() {
