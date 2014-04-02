@@ -49,7 +49,7 @@ Profiler        9.63%                       19.81%                      16.90%
 Part 2: Spinning AVL Trees
 ==========================
 
-//TODO Discuss difference from original data
+//TODO Finish data analysis section
 
 Words.java was run five times for each data file. *Please note that the timing profiler
 was run for the cracklib.txt and war.txt data files and the sampling profiler was run for
@@ -72,3 +72,18 @@ Hot Spots       304125 AvlTreeMap.insert    300213 java.io              303934 j
                 304127 AvlTreeMap.balance                               303930 java.lang.Character
                                                                         .codePointAt
 Profiler        23.98%                      20.59%                      16.77%
+
+
+Analysis of Data: As one can see from our tests, the AVL tree is actually slower than our original Binary Search tree. This may be due to what needs to be added to keep the AVL tree balanced. For example, the AVL tree needs to keep track of heights and rotate sub-trees, while the BST does not. 
+
+Part 3: Creepy Treaps
+=====================
+
+Words.java was run five times for each data file. *Please note that the timing profiler
+was run for the cracklib.txt and war.txt data files and the sampling profiler was run for
+the dictionary data file. Using the sampling profiler may have skewed the dictionary.txt
+results.
+
+                Treap Map Implementation Results :
+
+Time (sec)
