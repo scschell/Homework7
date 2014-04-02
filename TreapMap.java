@@ -4,61 +4,60 @@ import java.util.ArrayList;
 import java.util.Random;
 
 /**
-    Ordered maps from comparable keys to arbitrary values.
-
-    These trees are balanced so worst-case all operations
-    are O(log n). Each iterator operates on a copy of the keys, so
-    changing the tree will not change iterations in progress.
-
-    @param <K> Type for keys.
-    @param <V> Type for values.
-*/
+ * Treap implentation of ordered map.
+ * @author Edward Schembor < eschemb1@jhu.edu >
+ * @author Sayge Schell < sschell3@jhu.edu >
+ * Data Structures 600.226, Assignment 7
+ * March 4th, 2014
+ * @param <K>
+ *            Type for keys.
+ * @param <V>
+ *            Type for values.
+ */
 public class TreapMap<K extends Comparable<? super K>, V>
     implements OrderedMap<K, V> {
-
-    // Note that we don't use "static" here, still "Node" will
-    // have type parameters "K" and "V" like the outer class.
+    // Node class
     private class Node {
         Node left, right;
         K key;
         V value;
-		int priority;;
-
+        int priority;;
+        /**
+         * Node Constructor.
+         * @param k
+         *            Key
+         * @param v
+         *            Value
+         */
         Node(K k, V v) {
             // left and right default to null
             this.key = k;
             this.value = v;
-			this.priority = rand.nextInt(); //random priority
+            this.priority = rand.nextInt(); //random priority
         }
-
-        // Just for debugging purposes.
-        public String toString() {
-            return "Node<key: " + this.key
-                + "; value: " + this.value
-                + ">";
-        }
-
-		public int customRandom() {
-            return 1;
-		}
-
     }
 
     private Node root;
-    private int size;
+    private int size; //number of elements in treap
     private StringBuilder stringBuilder;
-	private Random rand = new Random();
+    private Random rand = new Random();
 
     @Override
+    // Code taken from BinarySearchTreeMap.java.
     public int size() {
         return this.size;
     }
 
-    // Return node for given key. This one is iterative
-    // but the recursive one from lecture would work as
-    // well. (For simply finding a node there's no big
-    // advantage to using recursion; I did recursion in
-    // lecture to get you into the right mindset.)
+    /**
+     * Returns the node for the given key. Code taken from
+     * BinarySearchTreeMap.java.
+     * @param k
+     *            key
+     * @return found node that has the given key, returns null if no node is
+     *         found
+     * @throws IllegalArgumentException
+     *             if passed a null key
+     */
     private Node find(K k) {
         if (k == null) {
             throw new IllegalArgumentException("cannot handle null key");
@@ -78,12 +77,20 @@ public class TreapMap<K extends Comparable<? super K>, V>
     }
 
     @Override
+    // Code taken from BinarySearchTreeMap.java.
     public boolean has(K k) {
         return this.find(k) != null;
     }
 
-    // Return node for given key, throw an exception
-    // if the key is not in the tree.
+    /**
+     * Returns node for given key, throwing an exception if the key is not in
+     * the tree. Taken from BinarySearchTreeMap.java.
+     * @param k
+     *            key
+     * @return found node with given key
+     * @throws IllegalArgumentException
+     *             if node does not exist in tree
+     */
     private Node findForSure(K k) {
         Node n = this.find(k);
         if (n == null) {
@@ -93,43 +100,75 @@ public class TreapMap<K extends Comparable<? super K>, V>
     }
 
     @Override
+    // Code taken from BinarySearchTreeMap.java.
     public void put(K k, V v) {
         Node n = this.findForSure(k);
         n.value = v;
     }
 
     @Override
+    // Code taken from BinarySearchTreeMap.java.
     public V get(K k) {
         Node n = this.findForSure(k);
         return n.value;
     }
 
+    /**
+     * Rotates the given node left.
+     * @param n
+     *            node to be rotated
+     * @return the new root of the rotated node
+     */
     private Node rotateLeft(Node n) {
-        Node temp = n.right;
-		n.right = temp.left;
-		temp.left = n;
-		return temp;
-	}
+        Node temp = n.right; // save larger child
+        // detach larger child and preserve temp's smaller child
+        n.right = temp.left;
+        // detach temp's smaller child and attach old root to temp
+        temp.left = n;
+        return temp; // return rotated node's new root
+    }
 
-	private Node rotateRight(Node n) {
-        Node temp = n.left;
-		n.left = temp.right;
-		temp.right = n;
-		return temp;
-	}
-
-	private Node balance(Node n) {
+    /**
+     * Rotates the given node right.
+     * @param n
+     *            node to be rotated
+     * @return the new root of the rotated node
+     */
+    private Node rotateRight(Node n) {
+        Node temp = n.left; // save smaller child
+        // detach smaller child and preserve temp's larger child
+        n.left = temp.right;
+        // detach temp's larger child and attach old root to temp
+        temp.right = n;
+        return temp; // return rotated node's new root
+    }
+    /**
+     * Balances nodes by calling rotations on them. Code adapted from
+     * lecture notes.
+     * @param n
+     *            node to balance
+     * @return balanced node
+     */
+    private Node balance(Node n) {
         if ((n.right != null) && (n.priority < n.right.priority)) {
-            n = this.rotateLeft(n);
-		} else if ((n.left != null) && (n.priority < n.left.priority)) {
-            n = this.rotateRight(n);
-		}
-		return n;
-	}
+            n = this.rotateLeft(n); //only rotate left if left child exists
+        } else if ((n.left != null) && (n.priority < n.left.priority)) {
+            n = this.rotateRight(n); //only rotate right if right child exists
+        }
+        return n;
+    }
 
-    // Insert given key and value into subtree rooted
-    // at given node; return changed subtree with new
-    // node added.
+    /**
+     * Inserts node of a given key and value into a subtree rooted at given
+     * node. Code is a modified version of BinarySearchTreeMap.java.
+     * @param n
+     *            root node
+     * @param k
+     *            key
+     * @param v
+     *            value
+     * @return node with subtree added
+     */
     private Node insert(Node n, K k, V v) {
         if (n == null) {
             return new Node(k, v);
@@ -144,11 +183,12 @@ public class TreapMap<K extends Comparable<? super K>, V>
             throw new IllegalArgumentException("duplicate key " + k);
         }
 
-        n = this.balance(n);
+        n = this.balance(n); //updates balance
         return n;
     }
 
     @Override
+    // Code taken from BinarySearchTreeMap.java.
     public void insert(K k, V v) {
         if (k == null) {
             throw new IllegalArgumentException("cannot handle null key");
@@ -156,10 +196,14 @@ public class TreapMap<K extends Comparable<? super K>, V>
         this.root = this.insert(this.root, k, v);
         this.size += 1;
     }
-	
-    // Return node with maximum key in subtree rooted
-    // at given node. (Iterative version because once
-    // again recursion has no advantage here.)
+
+    /**
+     * Returns node with maximum key in subtree rooted at given node. Code taken
+     * from BinarySearchTreeMap.java.
+     * @param n
+     *            root node
+     * @return node with maximum key
+     */
     private Node max(Node n) {
         while (n.right != null) {
             n = n.right;
@@ -167,10 +211,15 @@ public class TreapMap<K extends Comparable<? super K>, V>
         return n;
     }
 
-    // Remove node with given key from subtree rooted at
-    // given node; return changed subtree with given key
-    // missing. (Once again doing this recursively makes
-    // it easier to add fancy rebalancing code later.)
+    /**
+     * Removes node with given key from subtree rooted at given node. Modified
+     * code taken from BinarySearchTreeMap.java.
+     * @param n
+     *            root node
+     * @param k
+     *            key
+     * @return subtree with given key missing
+     */
     private Node remove(Node n, K k) {
         if (n == null) {
             throw new IllegalArgumentException("cannot find key " + k);
@@ -182,21 +231,25 @@ public class TreapMap<K extends Comparable<? super K>, V>
         } else if (cmp > 0) {
             n.right = this.remove(n.right, k);
         } else {
-            if((n.right != null) && (n.left != null)) {
+            if ((n.right != null) && (n.left != null)) {
+                //rotates in an arbitrary direction if node has children
                 n = this.rotateLeft(n);
-			} else {
-			    n = this.remove(n);
-			}
-			return n;
+            } else {
+                //once there are 1 or 0 children left, node is removed
+                n = this.remove(n);
+            }
+            return n;
         }
         return n;
     }
 
-    // Remove given node and return the remaining tree.
-    // Easy if the node has 0 or 1 child; if it has two
-    // children, find the predecessor, copy its data to
-    // the given node (thus removing the key we need to
-    // get rid off), the remove the predecessor node.
+    /**
+     * Removes given node and returns the remaining tree. Modified code
+     * taken from BinarySearchTree.java.
+     * @param n
+     *            node to remove
+     * @return the tree with the removed node
+     */
     private Node remove(Node n) {
         // 0 and 1 child
         if (n.left == null) {
@@ -206,10 +259,11 @@ public class TreapMap<K extends Comparable<? super K>, V>
             return n.left;
         }
 
-		return n;
+        return n;
     }
 
     @Override
+    // Code taken from BinarySearchTree.java.
     public void remove(K k) {
         if (k == null) {
             throw new IllegalArgumentException("cannot handle null key");
@@ -218,8 +272,14 @@ public class TreapMap<K extends Comparable<? super K>, V>
         this.size -= 1;
     }
 
-    // Recursively add keys from subtree rooted at given node
-    // into the given list.
+    /**
+     * Adds keys from subtree rooted at given node. Code taken
+     * from BinarySearchTree.java.
+     * @param n
+     *            root node
+     * @param keys
+     *            list of keys
+     */
     private void iteratorHelper(Node n, List<K> keys) {
         if (n == null) { return; }
         this.iteratorHelper(n.left, keys);
@@ -228,14 +288,17 @@ public class TreapMap<K extends Comparable<? super K>, V>
     }
 
     @Override
+    // Code taken from BinarySearchTree.java.
     public Iterator<K> iterator() {
         List<K> keys = new ArrayList<K>();
         this.iteratorHelper(this.root, keys);
         return keys.iterator();
     }
 
-    // If we don't have a StringBuilder yet, make one;
-    // otherwise just reset it back to a clean slate.
+    /**
+     * Creates and resets StringBuilder. Code taken from
+     * BinarySearchTree.java.
+     */
     private void setupStringBuilder() {
         if (this.stringBuilder == null) {
             this.stringBuilder = new StringBuilder();
@@ -244,8 +307,14 @@ public class TreapMap<K extends Comparable<? super K>, V>
         }
     }
 
-    // Recursively append string representations of keys and
-    // values from subtree rooted at given node.
+    /**
+     * Appends string representations of keys and value from subtree rooted at
+     * given node. Code taken from BinarySearchTree.java.
+     * @param n
+     *            root node
+     * @param s
+     *            StringBuilder
+     */
     private void toStringHelper(Node n, StringBuilder s) {
         if (n == null) { return; }
         this.toStringHelper(n.left, s);
@@ -257,6 +326,7 @@ public class TreapMap<K extends Comparable<? super K>, V>
     }
 
     @Override
+    // Code taken from BinarySearchTree.java.
     public String toString() {
         this.setupStringBuilder();
         this.stringBuilder.append("{");
