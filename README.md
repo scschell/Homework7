@@ -45,3 +45,30 @@ Hot Spots       304106 BST.insert           300210 java.io.FileOutput   303934 j
                                                                         codePointat
 Profiler        9.63%                       19.81%                      16.90%
 
+
+Part 2: Spinning AVL Trees
+==========================
+
+//TODO Discuss difference from original data
+
+Words.java was run five times for each data file. *Please note that the timing profiler
+was run for the cracklib.txt and war.txt data files and the sampling profiler was run for
+the dictionary data file. Using the sampling profiler may have skewed the dictionary.txt
+results.
+                AVL Tree Map Implementation Results :
+
+                cracklib                    dictionary                  war
+
+Time (sec)      0.66275807                  1.504598647                 1.023242583
+                0.680427409                 1.481751269                 1.033800726
+                0.663901082                 1.508372056                 1.036844761
+                0.684004796                 1.501435195                 1.009787024
+                0.656835751                 1.48845912                  1.021393528
+    Average     0.6695854216                1.4969232574                1.0250137244
+Hot Spots       304125 AvlTreeMap.insert    300213 java.io              303934 java.util.regex.
+                                            FileOutputStream.writeBytes Pattern$CharProperty.match
+                304122 AvlTreeMap$Node.     300184 AvlTreeMap.find      303928 java.nio.CharBuffer.charAt
+                access$000                                              .charAt
+                304127 AvlTreeMap.balance                               303930 java.lang.Character
+                                                                        .codePointAt
+Profiler        23.98%                      20.59%                      16.77%
