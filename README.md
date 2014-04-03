@@ -79,11 +79,27 @@ Analysis of Data: As one can see from our tests, the AVL tree is actually slower
 Part 3: Creepy Treaps
 =====================
 
+//TODO Discuss difference from original data
+
 Words.java was run five times for each data file. *Please note that the timing profiler
 was run for the cracklib.txt and war.txt data files and the sampling profiler was run for
 the dictionary data file. Using the sampling profiler may have skewed the dictionary.txt
 results.
-
                 Treap Map Implementation Results :
 
-Time (sec)
+                cracklib                    dictionary                  war
+
+Time (sec)     0.655766418                  1.471288315                     1.03459172
+               0.663439028                  1.498586679                     1.042862616
+               0.684952291                  1.504919772                     1.075101934
+               0.67410363                   1.494140051                     1.032936898
+               0.672926003                  1.487561221                     1.049623024
+    Average    0.670237474                  1.4912992076                    1.0470232384
+Hot Spots      304130 TreapMap.insert       300199 java.io.FileOutputStream 303951 java.util.regex.
+                                            .writeBytes                     Pattern$CharProperty.match
+               303950 java.util.regex.      300180 TreapMap.find            303945 java.nio.CharBuffer.charAt
+               Pattern$CharProperty.match   
+               303944 java.nio.CharBuffer                                   303947 java.lang.Character.codePointAt
+               .charAt
+                                                                            304134 TreapMap.find
+Profiler       13.40%                       25.34%                          14.03%
