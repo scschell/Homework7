@@ -31,8 +31,8 @@ sampling profiler may have skewed the dictionary.txt results.
 
                 cracklib                    dictionary                  war
 
-Time (sec)      0.625034817                 1.374846445                 0.93535028
-                0.643090718                 1.391103477                 0.944398742
+Time for (sec)  0.625034817                 1.374846445                 0.93535028
+shuffled file   0.643090718                 1.391103477                 0.944398742
                 0.647903398                 1.385745871                 0.943656495
                 0.644028897                 1.504298788                 0.925617312
                 0.663665153                 1.373356658                 0.934856524
@@ -49,18 +49,25 @@ Profiler        9.63%                       19.81%                      16.90%
 Part 2: Spinning AVL Trees
 ==========================
 
-//TODO Finish data analysis section
 
 Words.java was run five times for each data file. *Please note that the timing profiler
 was run for the cracklib.txt and war.txt data files and the sampling profiler was run for
 the dictionary data file. Using the sampling profiler may have skewed the dictionary.txt
-results.
+results. Please note that the first time listed is that for the unshuffled text files and
+the second is for the shuffled text files.
+
                 AVL Tree Map Implementation Results :
 
                 cracklib                    dictionary                  war
 
-Time (sec)      0.66275807                  1.504598647                 1.023242583
-                0.680427409                 1.481751269                 1.033800726
+Time for (sec)  0.709548777                 1.53865479                  1.052001904                                 unshuffled file 0.704890122                 1.570155474                 1.061116488       
+                0.725205894                 1.524217558                 1.015684993       
+                0.704094448                 1.558982279                 1.009726782       
+                0.71146669                  1.549304653                 1.038141486       
+    Average     0.7110411862                1.5482629508                1.0353343306
+    
+Time for (sec)  0.66275807                  1.504598647                 1.023242583
+shuffled file   0.680427409                 1.481751269                 1.033800726
                 0.663901082                 1.508372056                 1.036844761
                 0.684004796                 1.501435195                 1.009787024
                 0.656835751                 1.48845912                  1.021393528
@@ -88,12 +95,22 @@ results.
 
                 cracklib                    dictionary                  war
 
-Time (sec)     0.655766418                  1.471288315                     1.03459172
-               0.663439028                  1.498586679                     1.042862616
-               0.684952291                  1.504919772                     1.075101934
-               0.67410363                   1.494140051                     1.032936898
-               0.672926003                  1.487561221                     1.049623024
-    Average    0.670237474                  1.4912992076                    1.0470232384
+Time for (sec)  0.627308175                 1.17124309                      1.053791667
+unshuffled file 0.626444488                 1.162722992                     1.027778996
+                0.622604004                 1.190394974                     1.039526087
+                0.626247326                 1.196423049                     1.055811017
+                0.610721522                 1.162361861                     1.045478045
+    Average     0.622665103                 1.1766291932                    1.0444771624
+
+Time for (sec)  0.655766418                 1.471288315                     1.03459172
+shuffled file   0.663439028                 1.498586679                     1.042862616
+                0.684952291                 1.504919772                     1.075101934
+                0.67410363                  1.494140051                     1.032936898
+                0.672926003                 1.487561221                     1.049623024
+    Average     0.670237474                 1.4912992076                    1.0470232384
+    
+Time for (sec)
+
 Hot Spots      304130 TreapMap.insert       300199 java.io.FileOutputStream 303951 java.util.regex.
                                             .writeBytes                     Pattern$CharProperty.match
                303950 java.util.regex.      300180 TreapMap.find            303945 java.nio.CharBuffer.charAt
@@ -103,4 +120,5 @@ Hot Spots      304130 TreapMap.insert       300199 java.io.FileOutputStream 3039
                                                                             304134 TreapMap.find
 Profiler       13.40%                       25.34%                          14.03%
 
-Analysis of Data: Our treap implementation actually ran slower than our original Binary Search Tree. This may be due to multiple factors. Although the worst case for a Treap runs faster than for that of a plain Binary Search Tree (O(logn) vs O(n)), it does not mean that a Treap will always run faster than a Binary Search Tree when given randomized data. The advantage of a Treap would become more apparent when dealing with already sorted data. Instead of consistently adding to one side of the tree until the tree becomes so tall that it takes O(n) time to insert, the Treap would sort the data left and right leading to faster insertion. We assume that the original intention of the sorted cracklib.txt and dictionary.txt files was to show this, but unfortunately, the Binary Search Tree height became so large that StackOverflow exceptions were caused and the data had to be shuffled in order to avoid this problem. Assuming that the original (sorted) text files did not cause an error, we would see that the Treap would run much faster than the Binary Search Tree (and also the AVL tree!). However, since the data was randomized, it led to more randomized Binary Search Tree shapes, such that the height did not get sufficiently large such that the time to find the node in order to insert in the BST implementation did not exceed that of the time to find and rotate the nodes in the Treap implementation. It should also be noted that while the Treap did not always run faster than the AVL Tree, the time spent in the map methods were generally shorter.
+Analysis of Data: Our treap implementation actually ran slower than our original Binary Search Tree. This may be due to multiple factors. Although the worst case for a Treap runs faster than for that of a plain Binary Search Tree (O(logn) vs O(n)), it does not mean that a Treap will always run faster than a Binary Search Tree when given randomized data. The advantage of a Treap would become more apparent when dealing with already sorted data. Instead of consistently adding to one side of the tree until the tree becomes so tall that it takes O(n) time to insert, the Treap would sort the data left and right leading to faster insertion. We assume that the original intention of the sorted cracklib.txt and dictionary.txt files was to show this, but unfortunately, the Binary Search Tree height became so large that StackOverflow exceptions were caused and the data had to be shuffled in order to avoid this problem. Assuming that the original (sorted) text files did not cause an error, we would see that the Treap would run much faster than the Binary Search Tree (as it does for the AVL tree). However, since the data was randomized, it led to more randomized Binary Search Tree shapes, such that the height did not get sufficiently large such that the time to find the node in order to insert in the BST implementation did not exceed that of the time to find and rotate the nodes in the Treap implementation.
+    Noticing this, we decided to run the original sorted/unshuffled cracklib.txt and dictionary.txt files and compare the times of the AVL Tree and Treap. As expected, the Treap runs faster than the AVL tree in sorted cases and would presumably run faster than the Binary Search Tree in sorted cases (given that a StackOverflow error would not occur).
